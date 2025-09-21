@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Free IPv4 Subnet Calculator that supports Subnet Mask, CIDR, Wildcard Mask, and Host Requirement inputs. Learn subnetting with detailed results and explanations.">
+  <meta name="keywords" content="IPv4 Subnet Calculator, Subnet Mask Calculator, CIDR Calculator, Wildcard Mask, IP Address Calculator, Network Subnetting, Host Calculation, Networking Tool, Hacker Subnet Calculator, Online Subnet Calculator">
+  <meta name="author" content="Hemanth Kumar M J">
+  <title>IPv4 Subnet Calculator</title>
+<style>
+body {
+  font-family: 'Courier New', monospace;
+  background-color: #010409; 
+  color: #0f0;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #010409;
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 2px solid #0f0;
+}
+
+header h1 {
+  color: #0f0;
+  margin: 0;
+  font-size: 50px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 4px #0f0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #010409;
+  border: 1px solid #0f0;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #0f0333, 0 0 40px #0f0333 inset;
+}
+
+h2 {
+  color: #0f0;
+  margin-top: 0;
+  font-size: 22px;
+  text-align: center;
+  text-shadow: 0 0 4px #0f0;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+
+}
+
+.input-group input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #0f0;
+  border-radius: 6px;
+  background-color: #010409;
+  color: #0f0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.input-group button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.calculate {
+  background-color: #0f0;
+  color: #010409;
+}
+.calculate:hover {
+  background-color: #00ff00aa;
+}
+
+.random {
+  background-color: #0f0;
+  color: #010409;
+}
+.random:hover {
+  background-color: #00ff00aa;
+}
+
+.clearBtn {
+  background-color: #0f0;
+  color: #010409;
+}
+.clearBtn:hover {
+  background-color: #00ff00aa;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  background-color: #010409;
+  border: 1px solid #0f0;
+  box-shadow: 0 0 15px #0f0a, 0 0 30px #0f0a inset;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #0f0;
+}
+
+td {
+  color: #0f0;
+}
+
+tr:hover {
+  background-color: #011001;
+}
+
+table.example-table {
+  border: 1px solid #0f0;
+}
+table.example-table th {
+  color: #0f0;
+  background-color: #010409;
+}
+table.example-table td {
+  color: #0f0;
+  background-color: #010409;
+  font-family: monospace;
+}
+
+.explanation {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #010409;
+  border: 5px solid #0f0; 
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  color: #0f0;
+  line-height: 1.6;
+  box-shadow: 0 0 15px #0f0a, 0 0 30px #0f0a inset;
+}
+
+.explanation h3 {
+  color: #0f0;
+  margin-top: 0;
+  font-size: 20px;
+  text-align: left;
+  text-shadow: 0 0 4px #0f0;
+}
+
+.explanation p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.explanation b {
+  color: #58a6ff;
+  display: inline-block;
+  width: 220px;
+}
+
+.explanation code, 
+.explanation span {
+  background-color: #011001;
+  color: #0ff;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.explanation p:hover {
+  background-color: #011a01;
+  transition: 0.3s;
+  padding-left: 6px;
+}
+
+.footer-note {
+  font-size: 13px;
+  color: #0f0;
+  margin-top: 20px;
+  text-align: center;
+  text-shadow: 0 0 2px #0f0;
+}
+
+</style>
+</head>
+<body>
+  <header>
+    <h1>IPv4 Subnet Calculation</h1>
+  </header>
+
+  <div class="container">
+    <h2>Enter IP Address and Netmask</h2>
+    <div class="input-group">
+      <input type="text" id="ipInput" placeholder="e.g. 192.168.10.1/24 or 192.168.10.1 255.255.255.0">
+      <button class="calculate" onclick="calculate()">Calculate</button>
+      <button class="random" onclick="randomIP()">Random IP</button>
+      <button class="clearBtn" onclick="clearBtn()">Clear IP</button>
+    </div>
+
+ <table id="resultsTable">
+  <tbody>
+    <!-- Basic IP Info -->
+    <tr><th>IP Address:</th><td id="ipAddress"></td></tr>
+    <tr><th>IP Type:</th><td id="ipType"></td></tr>
+    <tr><th>IP Class:</th><td id="ipClass"></td></tr>
+
+    <!-- Network Info -->
+    <tr><th>Netmask:</th><td id="netmask"></td></tr>
+    <tr><th>Binary Netmask:</th><td id="binaryMask"></td></tr>
+    <tr><th>Wildcard Mask:</th><td id="wildcard"></td></tr>
+    <tr><th>CIDR Notation:</th><td id="cidr"></td></tr>
+    <tr><th>Network Prefix (Decimal):</th><td id="networkPrefix"></td></tr>
+
+    <!-- Subnet & Broadcast -->
+    <tr><th>Subnet Bits:</th><td id="subnetBits"></td></tr>
+    <tr><th>Host Bits:</th><td id="hostBits"></td></tr>
+    <tr><th>Subnet ID (Network Address):</th><td id="network"></td></tr>
+    <tr><th>Broadcast Address:</th><td id="broadcast"></td></tr>
+    <tr><th>Network Address (Binary):</th><td id="networkBinary"></td></tr>
+    <tr><th>Broadcast Address (Binary):</th><td id="broadcastBinary"></td></tr>
+
+    <!-- Host Info -->
+    <tr><th>First Usable Host:</th><td id="firstHost"></td></tr>
+    <tr><th>Last Usable Host:</th><td id="lastHost"></td></tr>
+    <tr><th>Usable Host Range:</th><td id="hostRange"></td></tr>
+    <tr><th>Total number of hosts:</th><td id="totalHosts"></td></tr>
+    <tr><th>Number of usable hosts:</th><td id="usableHosts"></td></tr>
+
+    <!-- Hexadecimal Representation -->
+    <tr><th>IP in Hex:</th><td id="ipHex"></td></tr>
+    <tr><th>Network in Hex:</th><td id="networkHex"></td></tr>
+    <tr><th>Broadcast in Hex:</th><td id="broadcastHex"></td></tr>
+
+    <!-- Planning & Increment -->
+    <tr><th>Subnet Increment (Block Size):</th><td id="subnetIncrement"></td></tr>
+    <tr><th>Number of Subnets for Hosts:</th><td id="numSubnets"></td></tr>
+  </tbody>
+</table>
+
+<h2>Example IP Address Inputs</h2>
+
+<table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; width: 100%; text-align: left;">
+  <thead style="background-color: #111; color: #0f0;">
+    <tr>
+      <th>IP Version</th>
+      <th>Example Input</th>
+      <th>Format / Description</th>
+    </tr>
+  </thead>
+  <tbody style="background-color: #000; color: #0f0; font-family: monospace;">
+
+    <tr>
+      <td>IPv4</td>
+      <td>172.31.170.140 255.255.252.0</td>
+      <td>Subnet Mask</td>
+    </tr>
+    <tr>
+      <td>IPv4</td>
+      <td>192.168.4.215/28</td>
+      <td>CIDR Notation</td>
+    </tr>
+    <tr>
+      <td>IPv4</td>
+      <td>172.16.45.45 0.0.15.255</td>
+      <td>Wildcard Mask</td>
+    </tr>
+    <tr>
+      <td>IPv4</td>
+      <td>10.45.50.60 #52</td>
+      <td>Calculates a network with 52 hosts</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="color: #0f0; font-family: monospace; background-color: #111; padding: 8px;">
+Tip: Enter IPv4 in <strong>dotted decimal</strong> format, with optional CIDR or subnet mask. IPv6 requires prefix length. Ipv6 - analysis coming soon..
+</p>
+
+<div class="explanation">
+  <h3>🧮 Manual Calculation Guide</h3>
+  <table style="width:100%; border-collapse: collapse; font-family: 'Courier New', monospace; color:#0f0;">
+    <tbody>
+      <!-- 1. IP Address -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="width:250px; font-weight:bold; color:#58a6ff;">IP Address</td>
+        <td>
+          Start with the IP address you want to analyze, e.g., <code>192.168.1.10</code>.  
+          This identifies a host in a network.
+        </td>
+      </tr>
+
+      <!-- 2. Netmask -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Netmask</td>
+        <td>
+          Determines which portion of the IP is the network and which is host.  
+          Example: <code>255.255.255.0</code>.  
+          Formula: Network bits = count of consecutive 1s in binary netmask. Host bits = remaining bits.
+        </td>
+      </tr>
+
+      <!-- 3. Binary IP -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Binary IP</td>
+        <td>
+          Convert each octet to 8-bit binary. Example: <code>192.168.1.10 → 11000000.10101000.00000001.00001010</code>.
+        </td>
+      </tr>
+
+      <!-- 4. Binary Netmask -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Binary Netmask</td>
+        <td>
+          Convert netmask to binary to visualize network vs host bits.  
+          Example: <code>255.255.255.0 → 11111111.11111111.11111111.00000000</code>.
+        </td>
+      </tr>
+
+      <!-- 5. Wildcard Mask -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Wildcard Mask</td>
+        <td>
+          Inverse of netmask: <code>Wildcard = 255.255.255.255 - Netmask</code>.  
+          Example: <code>255.255.255.0 → 0.0.0.255</code>. Used in ACLs/firewalls.
+        </td>
+      </tr>
+
+      <!-- 6. CIDR Notation -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">CIDR Notation</td>
+        <td>
+          Count number of 1s in netmask: <code>/24</code> means 24 network bits.  
+          Example formula: <code>255.255.255.0 → 11111111.11111111.11111111.00000000 → /24</code>.
+        </td>
+      </tr>
+
+      <!-- 7. Subnet Bits -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Subnet Bits</td>
+        <td>
+          Extra bits borrowed from host portion to create subnets.  
+          Example: original /24, borrow 2 bits → subnet mask /26 → 4 subnets.
+        </td>
+      </tr>
+
+      <!-- 8. Host Bits -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Host Bits</td>
+        <td>
+          Remaining bits after network & subnet bits. Determines hosts per subnet.  
+          Formula: <code>Host bits = 32 - Network bits - Subnet bits</code>.
+        </td>
+      </tr>
+
+      <!-- 9. Subnet ID / Network Address -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Subnet ID / Network Address</td>
+        <td>
+          Logical AND between IP and netmask: <br>
+          <code>IP: 192.168.1.130 → 11000000.10101000.00000001.10000010</code><br>
+          <code>Netmask: 255.255.255.192 → 11111111.11111111.11111111.11000000</code><br>
+          <code>Network: 192.168.1.128 → 11000000.10101000.00000001.10000000</code>
+        </td>
+      </tr>
+
+      <!-- 10. First Usable Host -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">First Usable Host</td>
+        <td>
+          Add 1 to network address: <code>192.168.1.128 + 1 → 192.168.1.129</code>
+        </td>
+      </tr>
+
+      <!-- 11. Last Usable Host -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Last Usable Host</td>
+        <td>
+          Subtract 1 from broadcast address: <code>192.168.1.191 - 1 → 192.168.1.190</code>
+        </td>
+      </tr>
+
+      <!-- 12. Broadcast Address -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Broadcast Address</td>
+        <td>
+          Set all host bits to 1: <br>
+          <code>Network: 192.168.1.128 → 11000000.10101000.00000001.10000000</code><br>
+          <code>Broadcast: 192.168.1.191 → 11000000.10101000.00000001.10111111</code>
+        </td>
+      </tr>
+
+      <!-- 13. Total / Usable Hosts -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Total / Usable Hosts</td>
+        <td>
+          Total hosts = 2^(host bits). <br>
+          Usable hosts = Total - 2 (network & broadcast). <br>
+          Example: host bits = 6 → total 64, usable 62.
+        </td>
+      </tr>
+
+      <!-- 14. IP Class -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">IP Class</td>
+        <td>
+          Based on first octet: <br>
+          Class A: 1-126, B: 128-191, C: 192-223, D: 224-239 (Multicast), E: 240-254 (Experimental)
+        </td>
+      </tr>
+
+      <!-- 15. IP Type -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">IP Type</td>
+        <td>
+          Determine if IP is Private (RFC1918), Public, Loopback (127.0.0.0/8), or Link-Local (169.254.0.0/16)
+        </td>
+      </tr>
+
+      <!-- 16. Network / Broadcast in Binary -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Network / Broadcast in Binary</td>
+        <td>
+          Convert network and broadcast addresses to binary for visualization.  
+          Useful for ACLs and firewall rules.
+        </td>
+      </tr>
+
+      <!-- 17. IP / Network / Broadcast Hex -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">IP / Network / Broadcast Hex</td>
+        <td>
+          Convert each octet to hexadecimal. Example: 192.168.1.10 → 0xC0A8010A
+        </td>
+      </tr>
+
+      <!-- 18. Subnet Increment / Block Size -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Subnet Increment / Block Size</td>
+        <td>
+          Number of IPs in each subnet = 2^(host bits).  
+          Example: /26 → 2^(32-26) = 64 addresses per subnet
+        </td>
+      </tr>
+
+      <!-- 19. Number of Subnets for Hosts -->
+      <tr style="border-bottom:1px solid #0f0;">
+        <td style="font-weight:bold; color:#58a6ff;">Number of Subnets for Hosts</td>
+        <td>
+          Maximum subnets you can create = 2^(borrowed subnet bits).  
+          Example: borrow 2 bits → 4 subnets
+        </td>
+      </tr>
+
+      <!-- 20. Host Allocation Planning -->
+      <tr>
+        <td style="font-weight:bold; color:#58a6ff;">Host Allocation Planning</td>
+        <td>
+          Helps plan which IPs go into which subnet, avoiding overlaps. Useful for large networks or VLAN segmentation.
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+
+<div class="footer-note" style="font-family: 'Courier New', monospace; color: #0f0; text-align:center; font-size:13px; text-shadow: 0 0 2px #0f0;">
+  Powered by 
+  <a href="https://hemanthkumarmj.com" 
+     style="color:#0f0; text-decoration:none; font-weight:bold;">
+    www.hemanthkumarmj.com
+  </a>
+</div>  </div>
+<script>
+
+function ipToInt(ip) {
+  return ip.split('.').reduce((acc, oct) => (acc << 8) + parseInt(oct, 10), 0) >>> 0;
+}
+
+function intToIp(int) {
+  return [(int >>> 24), (int >> 16 & 255), (int >> 8 & 255), (int & 255)].join('.');
+}
+
+function maskToCidr(mask) {
+  return mask.split('.').map(Number).map(o => o.toString(2).padStart(8,'0')).join('').replace(/0+$/,'').length;
+}
+
+function wildcardMask(mask) {
+  return mask.split('.').map(o => 255 - parseInt(o, 10)).join('.');
+}
+
+function toHex(ip) {
+  return ip.split('.').map(o => parseInt(o,10).toString(16).padStart(2,'0').toUpperCase()).join('.');
+}
+
+function isValidIP(ip) {
+  const octets = ip.split('.');
+  if(octets.length !== 4) return false;
+  return octets.every(o => /^\d+$/.test(o) && parseInt(o,10)>=0 && parseInt(o,10)<=255);
+}
+
+function isValidNetmask(mask) {
+  const octets = mask.split('.');
+  if(octets.length !== 4) return false;
+  for(let o of octets){
+    if(!/^\d+$/.test(o)) return false;
+    let n = parseInt(o,10);
+    if(n<0 || n>255) return false;
+  }
+  const bin = octets.map(o=>parseInt(o).toString(2).padStart(8,'0')).join('');
+  if(!/^1*0*$/.test(bin)) return false;
+  if(bin==='0'.repeat(32) || bin==='1'.repeat(32)) return false;
+  return true;
+}
+
+function wildcardToMask(wildcard){
+  const octets = wildcard.split('.');
+  if(octets.length!==4) return null;
+  let mask = [];
+  for(let o of octets){
+    if(!/^\d+$/.test(o)) return null;
+    let num = parseInt(o,10);
+    if(num<0 || num>255) return null;
+    mask.push(255-num);
+  }
+  if(!isValidNetmask(mask.join('.'))) return null;
+  return mask.join('.');
+}
+
+function ipClass(ip){
+  let first = parseInt(ip.split('.')[0],10);
+  if(first<128) return "Class A";
+  if(first<192) return "Class B";
+  if(first<224) return "Class C";
+  if(first<240) return "Class D";
+  return "Class E";
+}
+
+function isPrivate(ip){
+  let [o1,o2] = ip.split('.').map(Number);
+  return (o1===10) || (o1===172 && o2>=16 && o2<=31) || (o1===192 && o2===168);
+}
+
+// --- Main Calculation ---
+function calculate() {
+  let input = document.getElementById("ipInput").value.trim().replace(/\s+/g,' ');
+  if(!input) return alert("Enter an IP address and mask.");
+
+  let ip, mask;
+
+  // CIDR Notation
+  if(input.includes("/")){
+    let [ipPart, prefix] = input.split("/");
+    ip = ipPart.trim();
+    if(!isValidIP(ip)) return alert("⚠️ Invalid IP Address!");
+    prefix = parseInt(prefix,10);
+    if(isNaN(prefix) || prefix<0 || prefix>32) return alert("⚠️ Invalid CIDR prefix!");
+    mask = intToIp(~((1 << (32-prefix)) -1) >>> 0);
+  }
+  // Host Count (#)
+  else if(input.includes("#")){
+    let [ipPart, hostPart] = input.split("#");
+    ip = ipPart.trim();
+    if(!isValidIP(ip)) return alert("⚠️ Invalid IP Address!");
+    let hosts = parseInt(hostPart,10);
+    if(isNaN(hosts) || hosts<=0) return alert("⚠️ Invalid host count!");
+    let cidr = 32 - Math.ceil(Math.log2(hosts + 2));
+    if(cidr<0 || cidr>32) return alert("⚠️ Host count too large!");
+    mask = intToIp(~((1 << (32-cidr)) -1) >>> 0);
+  }
+  // Wildcard Mask
+  else if(input.includes(" ") && input.split(" ")[1].includes(".")){
+    let parts = input.split(" ");
+    ip = parts[0].trim();
+    let second = parts[1].trim();
+    if(!isValidIP(ip)) return alert("⚠️ Invalid IP Address!");
+    // determine if wildcard or subnet mask
+    mask = isValidNetmask(second) ? second : wildcardToMask(second);
+    if(!mask) return alert("⚠️ Invalid mask or wildcard!");
+  }
+  else return alert("Invalid input. Use IPv4/Mask, IPv4/CIDR, wildcard mask, or host-count (#).");
+
+  // --- Calculations ---
+  let ipInt = ipToInt(ip);
+  let maskInt = ipToInt(mask);
+  let cidr = maskToCidr(mask);
+  let networkInt = ipInt & maskInt;
+  let broadcastInt = networkInt | (~maskInt >>> 0);
+  let totalHosts = Math.pow(2, 32 - cidr);
+  let hostBits = 32 - cidr;
+
+  // Handle /31 networks (2 hosts) per RFC 3021
+  let usableHosts = totalHosts > 2 ? totalHosts - 2 : totalHosts === 2 ? 2 : 0;
+  let firstHost = totalHosts > 2 ? intToIp(networkInt + 1) : totalHosts === 2 ? intToIp(networkInt) : "N/A";
+  let lastHost = totalHosts > 2 ? intToIp(broadcastInt - 1) : totalHosts === 2 ? intToIp(broadcastInt) : "N/A";
+
+  // --- Display ---
+  document.getElementById("ipAddress").innerText = ip;
+  document.getElementById("netmask").innerText = mask;
+  document.getElementById("wildcard").innerText = wildcardMask(mask);
+  document.getElementById("cidr").innerText = "/" + cidr;
+  document.getElementById("subnetBits").innerText = cidr + " bits";
+  document.getElementById("hostBits").innerText = hostBits + " bits";
+  document.getElementById("network").innerText = intToIp(networkInt);
+  document.getElementById("firstHost").innerText = firstHost;
+  document.getElementById("lastHost").innerText = lastHost;
+  document.getElementById("hostRange").innerText = firstHost + " - " + lastHost;
+  document.getElementById("broadcast").innerText = intToIp(broadcastInt);
+  document.getElementById("binaryMask").innerText = mask.split('.').map(o=>parseInt(o).toString(2).padStart(8,'0')).join('.');
+  document.getElementById("totalHosts").innerText = totalHosts;
+  document.getElementById("usableHosts").innerText = usableHosts;
+  document.getElementById("ipClass").innerText = ipClass(ip);
+  document.getElementById("ipType").innerText = isPrivate(ip) ? "Private" : "Public";
+  document.getElementById("ipHex").innerText = toHex(ip);
+  document.getElementById("networkPrefix").innerText = cidr;
+  document.getElementById("networkBinary").innerText = intToIp(networkInt).split('.').map(o=>parseInt(o).toString(2).padStart(8,'0')).join('.');
+  document.getElementById("broadcastBinary").innerText = intToIp(broadcastInt).split('.').map(o=>parseInt(o).toString(2).padStart(8,'0')).join('.');
+  document.getElementById("networkHex").innerText = toHex(intToIp(networkInt));
+  document.getElementById("broadcastHex").innerText = toHex(intToIp(broadcastInt));
+  document.getElementById("subnetIncrement").innerText = totalHosts;
+  document.getElementById("numSubnets").innerText = Math.pow(2, hostBits);
+}
+
+// --- Random IP Generator ---
+function randomIP(){
+  let ip = [192, Math.floor(Math.random()*256), Math.floor(Math.random()*256), Math.floor(Math.random()*256)].join('.');
+  document.getElementById("ipInput").value = ip + " 255.255.255.0";
+}
+
+function clearBtn() {
+    // Clear the input field
+    document.getElementById("ipInput").value = "";
+
+    // List of all table cell IDs to clear
+    const fields = [
+        "ipAddress", "netmask", "wildcard", "cidr", "subnetBits", "hostBits",
+        "network", "firstHost", "lastHost", "hostRange", "broadcast", "binaryMask",
+        "totalHosts", "usableHosts", "ipClass", "networkPrefix",
+        "networkBinary", "broadcastBinary", "ipHex", "networkHex", "broadcastHex",
+        "ipType", "subnetIncrement", "numSubnets"
+    ];
+
+    // Loop through each field and clear its content
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "";
+    });
+}
+
+</script>
+
+</body>
+</html>
